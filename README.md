@@ -69,7 +69,7 @@ You need Python installed on your machine. If you don't have Python, let's insta
 3. Clone the project to your local machine:
 
    ```
-   git clone [https://github.com/vannytrinh/CompToDNAPy.git](https://github.com/UCB-BioE-Genetic-Design-Automation/final-project-starter-code-vannytrinh.git)
+   git clone https://github.com/vannytrinh/CompToDNAPy.git
    ```
 4. Change directories to enter the project:
 
