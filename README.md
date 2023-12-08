@@ -45,9 +45,9 @@ deactivate
 ```
 
 Remember, every time you start working on the project, activate the virtual environment and deactivate it once you're done.
-# CompToDNAPy
+# InventoryManager
 
-CompToDNAPy is a Python project designed for bioengineering students to understand the process of selecting ribosome binding sites (RBS) and designing transcripts. This project follows the Function/Model pattern, separating data models from business logic.
+InventoryManager is a Python project designed to keep track of DNA samples, following the box organization used in a wet-lab setting. This project follows the Function/Model pattern, separating data models from business logic.
 
 ## Getting Started
 
@@ -69,17 +69,17 @@ You need Python installed on your machine. If you don't have Python, let's insta
 3. Clone the project to your local machine:
 
    ```
-   git clone https://github.com/your_username/CompToDNAPy.git
+   git clone [https://github.com/vannytrinh/CompToDNAPy.git](https://github.com/UCB-BioE-Genetic-Design-Automation/final-project-starter-code-vannytrinh.git)
    ```
 4. Change directories to enter the project:
 
    ```
-   cd CompToDNAPy
+   cd InventoryManagerPy
    ```
 5. Run the program:
 
    ```
-   python3 -m comp_to_dna_py
+   python3 -m inventory_manager_py
    ```
 
 ### Running the Tests
@@ -118,10 +118,8 @@ Don't be afraid to explore and make mistakes. That's a huge part of the learning
 
 ## Authors
 
-* **Your Name** - *Initial work* - [YourUsername](https://github.com/your_username)
+* **Van Trinh** - *Initial work* - [vannytrinh](https://github.com/vannytrinh)
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* UCB BIOE134: Genetic Design Automation with Professor J. Christoper Anderson
