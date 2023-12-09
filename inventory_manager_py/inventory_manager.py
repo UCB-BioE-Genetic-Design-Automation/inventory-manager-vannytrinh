@@ -5,6 +5,8 @@ from .models.inventory import Inventory
 from .models.location import Location
 from .models.sample import Sample
 from typing import List, Dict, Set, Tuple
+import csv
+import re 
 
 class InventoryManager: 
 
@@ -339,7 +341,246 @@ class InventoryManager:
         if row >= num_row or col >= num_col:
             raise ValueError('Location does not exist in box')
 
+    # NOTE: make sure box instance is not changed after
+    def box_to_tsv(box: Box, filepath: str) -> str: 
+        '''
+        Saves data of specified box to TSV format and saves it as a file
+        
+        Args:
+        box (Box): Box whose data is to be converted
+        filepath (str): Filepath wheer tsv is to be stored
+        
+        Return:
+        str: name of filepath where tsv was saved
+        '''
+        samples = box.samples
+        # check if valid box 
+        if not isinstance(box, Box):
+            raise ValueError('Invalid box')
+            
+        # helper function to format attribute of samples 
+        # for tsv 
+        def format_sample_tsv(samples, attr):
+            # make sure not to change Box instance
+            samples_tsv = samples.copy()
 
+            # iter through rows
+            for irow, row in enumerate(samples_tsv):
+                row_tsv = row.copy()
+                # iter through samples
+                for icol, sample in enumerate(row_tsv):
+                    # if sample exists
+                    if sample:
+                        # get the attr 
+                        sample_attr = getattr(sample, attr)
+                        # check if it is not none
+                        if sample_attr:
+                            # get string of attr 
+                            # don't want to get the string of none
+                            # want the string of Enum classes 
+                            sample_attr = str(sample_attr)
+                        row_tsv[icol] = sample_attr
+                # add row label to array 
+                row_tsv.insert(0, _calc_row_label(irow))
+                samples_tsv[irow] = row_tsv
+
+            # create header for array
+            header = [f'>>{attr}'] + [i for i in range(1, len(samples_tsv[0]))]
+            samples_tsv.insert(0, header)
+
+            return samples_tsv
+        
+        # list of rows for tsv file
+        tsv_info = []
+        
+        # append box metadata 
+        tsv_info.append(['>name', box.name])
+        tsv_info.append(['>description', box.description])
+        tsv_info.append(['>location', box.location])
+        tsv_info.append([])
+        
+        # attributes to include in tsv file
+        attrs = ['label', 'sidelabel', 'concentration', 'construct', 'culture', 'clone']
+        # append sample info
+        for attr in attrs:
+            tsv_info.extend(format_sample_tsv(samples, attr))
+            tsv_info.append([])
+        
+        # write to file
+        # will error if unable to access filepath
+        with open(filepath, 'w', newline='') as tsvfile:
+            writer = csv.writer(tsvfile, delimiter='\t')
+            writer.writerows(tsv_info)
+        
+        return filepath
+
+    def tsv_to_box(filepath):
+        '''
+        Converts data from TSV file into Box object 
+        
+        Args:
+        filepath (str): filepath of TSV to be converted
+        
+        Return:
+        Box: Box object created from TSV file
+        '''
+        # read tsv file
+        # will error if unable to find/open file
+        with open(filepath, 'r', newline='', encoding='utf-8') as file:
+                reader = csv.reader(file, delimiter='\t')
+                # Read the entire content into a list
+                tsv_data = list(reader)
+
+        # dict to describe box
+        box_dict = {}
+        # array (will become 2d array) to keep track of sample data
+        samples = []
+        # num of columns in a box 
+        num_col = None
+        # current attribute being parsed 
+        curr_attr = None
+
+        # parse through row in data
+        for row in tsv_data:
+            # skip empty rows
+            if row == []:
+                continue
+
+            # look for '>' indicating box data
+            if row[0][0] == '>' and row[0][1] != '>':
+                # make sure there is a value for attribute
+                if len(row) != 2:
+                    raise ValueError('Box metadata incorrectly entered')
+                # get name of attribute
+                attr_name = row[0][1:]
+                # get value of attribute
+                attr_val = row[1]
+                # add info to box dict 
+                box_dict[attr_name] = attr_val
+
+            # look for '>>' indicating 
+            if row[0][0:2] == '>>':
+                # if not defined yet, set the number of col in a box
+                # Note: num_col includes the row label as an col 
+                if num_col == None:
+                    num_col = len(row)
+
+                # check that the num of cols in row matches the num cols for box
+                if  num_col != len(row):
+                    raise ValueError('Number of columns do not match for all rows')
+
+                # set the current attribute
+                curr_attr = row[0][2:]
+
+            # check if row starts with row label 
+            if _is_valid_row_label(row[0]):
+                # check that row has the correct number of cols in it
+                if num_col != len(row):
+                    raise ValueError('Number of columns do not match for all rows')
+
+                # get row number 
+                irow = _calc_row_num(row[0])
+                # check if this row either already exists or if it is the next row 
+                # if it is not the next row then data is formatted incorrectly and a row was skipped
+                if irow > len(samples): 
+                    raise ValueError('Row labels do not match number of rows given')
+
+                # if row not added yet 
+                if irow == len(samples):
+                    # define row 
+                    new_row = []
+                    # add empty dictionaries for each column
+                    for i in range(num_col - 1):
+                        new_row.append({})
+                    # add row
+                    samples.append(new_row)
+
+                # iter through samples in row 
+                for icol, sample in enumerate(row[1:]):  
+                    # if there is sample data
+                    if sample:
+                        # add it to dict 
+                        sample_dict = samples[irow][icol]
+                        sample_dict[curr_attr] = sample 
+                        
+        #
+        final_samples = []  
+        for irow, row in enumerate(samples):
+            final_samples.append([])
+            for icol, sample in enumerate(row):
+                if len(sample) > 0:
+                    # turn dict into Sample object
+                    sample = Sample(**sample)
+                else:
+                    sample = None
+                final_samples[irow].append(sample)
+                
+        box_dict['samples'] = final_samples
+        return Box(**box_dict)
+
+# HELPER FUNCTION
+def _is_valid_row_label(row_label: str) -> bool:
+    '''
+    Checks if label is a valid row label made of uppercase letters
+
+    Arg:
+    row_label (str): Label to check
+
+    Return:
+    True if valid
+    '''
+    # Regular expression pattern for uppercase letters only
+    pattern = re.compile(r'^[A-Z]+$')
+    
+    # Check if label matches the pattern
+    return bool(pattern.match(row_label))
+
+# HELPER FUNCTION
+def _calc_row_label(num_row: int) -> str:
+    '''
+    Calculates the letter equivalent of a row number using zero-based numbering
+    (eg. 'A' for row 0)
+
+    Arg:
+    num_row (int): Row integer 
+
+    Return:
+    str: Letter equivalent of row number 
+    '''
+    if num_row < 0:
+        raise ValueError('Row number must be non-negative')
+        
+    result = ""
+    while num_row >= 0:
+        # Convert the remainder to the corresponding letter
+        char_value = num_row % 26
+        result = chr(ord('A') + char_value) + result
+        # Update the number for the next iteration
+        num_row = num_row // 26 - 1
+
+        if num_row < 0:
+            break
+    
+    return result
+
+# HELPER FUNCTION
+def _calc_row_num(row_label: str) -> int:
+    '''
+    Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
+
+    Arg:
+    row_label (str): Row label made of uppercase letters
+
+    Return:
+    int: Integer equivalent of row label, using 0-based numbering
+
+    '''
+    result = 0
+    for char in row_label:
+        result = result * 26 + (ord(char) - ord('A') + 1)
+    return result - 1  # Adjusting to 0-based index
+
+        
 
     
 
