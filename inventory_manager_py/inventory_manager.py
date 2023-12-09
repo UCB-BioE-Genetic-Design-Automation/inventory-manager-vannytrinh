@@ -10,7 +10,103 @@ import re
 
 class InventoryManager: 
 
-    def add_sample(sample: Sample, position: tuple[int, int], boxname: str, inventory: Inventory) -> Inventory: 
+    # HELPER FUNC
+    def _find_box(self, boxname: str, inventory: Inventory) -> Box: 
+        '''
+        Finds box in inventory with given name
+
+        Args: 
+        boxname (str): name of box to search for 
+        inventory (Inventory): inventory to seach for box for
+
+        Returns: 
+        Box: box with boxname or None if no box found
+        '''
+        for box in inventory.boxes: 
+            if box.name == boxname: 
+                return box   
+        return None
+
+    # HELPER FUNC
+    def _check_valid_location(self, box: Box, position: tuple[int, int]): 
+        '''
+        Check to make sure Box has given position
+        '''
+        # make sure location is a positive number
+        row, col = position
+        if row < 0 or col < 0:
+            raise ValueError('Location must be positive')
+        
+        # get dimensions of box 
+        num_row, num_col = box.get_size()
+        # make sure location within range of box 
+        if row >= num_row or col >= num_col:
+            raise ValueError('Location does not exist in box')
+
+    # HELPER FUNCTION
+    def _is_valid_row_label(self, row_label: str) -> bool:
+        '''
+        Checks if label is a valid row label made of uppercase letters
+
+        Arg:
+        row_label (str): Label to check
+
+        Return:
+        True if valid
+        '''
+        # Regular expression pattern for uppercase letters only
+        pattern = re.compile(r'^[A-Z]+$')
+        
+        # Check if label matches the pattern
+        return bool(pattern.match(row_label))
+
+    # HELPER FUNCTION
+    def _calc_row_label(self, num_row: int) -> str:
+        '''
+        Calculates the letter equivalent of a row number using zero-based numbering
+        (eg. 'A' for row 0)
+
+        Arg:
+        num_row (int): Row integer 
+
+        Return:
+        str: Letter equivalent of row number 
+        '''
+        if num_row < 0:
+            raise ValueError('Row number must be non-negative')
+            
+        result = ""
+        while num_row >= 0:
+            # Convert the remainder to the corresponding letter
+            char_value = num_row % 26
+            result = chr(ord('A') + char_value) + result
+            # Update the number for the next iteration
+            num_row = num_row // 26 - 1
+
+            if num_row < 0:
+                break
+        
+        return result
+
+    # HELPER FUNCTION
+    def _calc_row_num(self, row_label: str) -> int:
+        '''
+        Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
+
+        Arg:
+        row_label (str): Row label made of uppercase letters
+
+        Return:
+        int: Integer equivalent of row label, using 0-based numbering
+
+        '''
+        result = 0
+        for char in row_label:
+            result = result * 26 + (ord(char) - ord('A') + 1)
+        return result - 1  # Adjusting to 0-based index
+    
+
+    def add_sample(self, sample: Sample, position: tuple[int, int], boxname: str, inventory: Inventory) -> Inventory: 
         '''
         Add new sample to specified location of box and updates inventory
         
@@ -24,11 +120,11 @@ class InventoryManager:
         Inventory: Updated inventory with sample added 
         '''
         # values for updated inventory
-        boxes = inventory.boxes
-        construct_to_locs = inventory.construct_to_locations
-        loc_to_conc = inventory.loc_to_conc
-        loc_to_clone = inventory.loc_to_clone
-        loc_to_culture = inventory.loc_to_culture
+        boxes = inventory.boxes.copy()
+        construct_to_locs = inventory.construct_to_locations.copy()
+        loc_to_conc = inventory.loc_to_conc.copy()
+        loc_to_clone = inventory.loc_to_clone.copy()
+        loc_to_culture = inventory.loc_to_culture.copy()
         
         # find box 
         box = _find_box(boxname, inventory)
@@ -67,7 +163,7 @@ class InventoryManager:
         
         return Inventory(boxes, construct_to_locs, loc_to_conc, loc_to_clone, loc_to_culture)
 
-    def remove_sample(position: tuple[int, int], boxname: str, inventory: Inventory):
+    def remove_sample(self, position: tuple[int, int], boxname: str, inventory: Inventory):
         '''
         Remove sample from specified location of box and updates inventory
         
@@ -120,7 +216,7 @@ class InventoryManager:
         
         return Inventory(boxes, construct_to_locs, loc_to_conc, loc_to_clone, loc_to_culture)  
     
-    def find_sample(query: dict, inventory: Inventory) -> List[Location]: 
+    def find_sample(self, query: dict, inventory: Inventory) -> List[Location]: 
         '''
         Finds the locations of samples matching the given criteria within the inventory
         
@@ -152,7 +248,7 @@ class InventoryManager:
 
         return list(matches) 
 
-    def add_box(box: Box, inventory: Inventory) -> Inventory:
+    def add_box(self, box: Box, inventory: Inventory) -> Inventory:
         '''
         Add box to inventory
         
@@ -165,14 +261,14 @@ class InventoryManager:
         
         '''
         # values of new inventory
-        boxes = inventory.boxes
-        construct_to_locs = inventory.construct_to_locations
-        loc_to_conc = inventory.loc_to_conc
-        loc_to_clone = inventory.loc_to_clone
-        loc_to_culture = inventory.loc_to_culture
+        boxes = inventory.boxes.copy()
+        construct_to_locs = inventory.construct_to_locations.copy()
+        loc_to_conc = inventory.loc_to_conc.copy()
+        loc_to_clone = inventory.loc_to_clone.copy()
+        loc_to_culture = inventory.loc_to_culture.copy()
 
         # check that box with same name does not already exist 
-        if _find_box(box.name, inventory):
+        if self._find_box(box.name, inventory):
             raise ValueError(f'Box with name {boxname} already exist in inventory')
 
         # add box
@@ -201,7 +297,7 @@ class InventoryManager:
         # return new inventory with updated info 
         return Inventory(boxes, construct_to_locs, loc_to_conc, loc_to_clone, loc_to_culture)
     
-    def remove_box(boxname: str, inventory: Inventory) -> Inventory:
+    def remove_box(self, boxname: str, inventory: Inventory) -> Inventory:
         '''
         Remove box with given name from inventory
         
@@ -250,7 +346,7 @@ class InventoryManager:
         # return new inventory with updated info 
         return Inventory(boxes, construct_to_locs, loc_to_conc, loc_to_clone, loc_to_culture)
 
-    def update_box(boxname, updates, inventory) -> Inventory: 
+    def update_box(self, boxname, updates, inventory) -> Inventory: 
         '''
         Updates specified metadata fields of box and updates inventory 
         
@@ -293,7 +389,7 @@ class InventoryManager:
                 inventory.loc_to_culture
             )
 
-    def retrieve_box_contents(boxname: str, inventory: Inventory):
+    def retrieve_box_contents(self, boxname: str, inventory: Inventory):
         '''
         Retrieves contents of specified box
         
@@ -308,41 +404,8 @@ class InventoryManager:
         box = _find_box(boxname, inventory)
         return box.samples
 
-    # HELPER FUNC
-    def _find_box(boxname: str, inventory: Inventory) -> Box: 
-        '''
-        Finds box in inventory with given name
-
-        Args: 
-        boxname (str): name of box to search for 
-        inventory (Inventory): inventory to seach for box for
-
-        Returns: 
-        Box: box with boxname or None if no box found
-        '''
-        for box in in inventory.boxes: 
-            if box.name == boxname: 
-                return box   
-        return None
-
-    # HELPER FUNC
-    def _check_valid_location(box: Box, position: Tuple[int, int]): 
-        '''
-        Check to make sure Box has given position
-        '''
-        # make sure location is a positive number
-        row, col = position
-        if row < 0 or col < 0:
-            raise ValueError('Location must be positive')
-        
-        # get dimensions of box 
-        num_row, num_col = box.get_size()
-        # make sure location within range of box 
-        if row >= num_row or col >= num_col:
-            raise ValueError('Location does not exist in box')
-
     # NOTE: make sure box instance is not changed after
-    def box_to_tsv(box: Box, filepath: str) -> str: 
+    def box_to_tsv(self, box: Box, filepath: str) -> str: 
         '''
         Saves data of specified box to TSV format and saves it as a file
         
@@ -357,6 +420,9 @@ class InventoryManager:
         # check if valid box 
         if not isinstance(box, Box):
             raise ValueError('Invalid box')
+        num_row, num_col = box.get_size()
+        if num_row < 1 or num_col < 1:
+            raise ValueError('Box must have at least 1 row and 1 column.')
             
         # helper function to format attribute of samples 
         # for tsv 
@@ -414,7 +480,7 @@ class InventoryManager:
         
         return filepath
 
-    def tsv_to_box(filepath):
+    def tsv_to_box(self, filepath):
         '''
         Converts data from TSV file into Box object 
         
@@ -528,68 +594,28 @@ class InventoryManager:
 
         # create new dict
         return Box(**box_dict)
-
-    # HELPER FUNCTION
-    def _is_valid_row_label(row_label: str) -> bool:
+    
+    def make_empty_box(self, name: str, description: str, location: str, size: tuple[str, str]) -> Box:
         '''
-        Checks if label is a valid row label made of uppercase letters
-
-        Arg:
-        row_label (str): Label to check
-
-        Return:
-        True if valid
+        Creates box of given size
         '''
-        # Regular expression pattern for uppercase letters only
-        pattern = re.compile(r'^[A-Z]+$')
-        
-        # Check if label matches the pattern
-        return bool(pattern.match(row_label))
-
-    # HELPER FUNCTION
-    def _calc_row_label(num_row: int) -> str:
-        '''
-        Calculates the letter equivalent of a row number using zero-based numbering
-        (eg. 'A' for row 0)
-
-        Arg:
-        num_row (int): Row integer 
-
-        Return:
-        str: Letter equivalent of row number 
-        '''
-        if num_row < 0:
-            raise ValueError('Row number must be non-negative')
+        num_row, num_col = size
+        if num_row < 1:
+            raise ValueError('Must have at least 1 row')
+        if num_col < 1:
+            raise ValueError('Must have at least 1 column')
             
-        result = ""
-        while num_row >= 0:
-            # Convert the remainder to the corresponding letter
-            char_value = num_row % 26
-            result = chr(ord('A') + char_value) + result
-            # Update the number for the next iteration
-            num_row = num_row // 26 - 1
-
-            if num_row < 0:
-                break
+        def empty_samples(num_row: int, num_col: int): 
+            '''
+            Returns a num_row by num_col matrix of nones
+            '''
+            row = [None] * num_col 
+            samples = [row.copy() for i in range(num_row)]
+            return samples
         
-        return result
-
-    # HELPER FUNCTION
-    def _calc_row_num(row_label: str) -> int:
-        '''
-        Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
-
-        Arg:
-        row_label (str): Row label made of uppercase letters
-
-        Return:
-        int: Integer equivalent of row label, using 0-based numbering
-
-        '''
-        result = 0
-        for char in row_label:
-            result = result * 26 + (ord(char) - ord('A') + 1)
-        return result - 1  # Adjusting to 0-based index
+        samples = empty_samples(num_row, num_col)
+        
+        return Box(name, description, location, samples)
 
         
 

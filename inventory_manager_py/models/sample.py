@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from .models.concentration import Concentration
-from .models.culture import Culture
+from .concentration import Concentration
+from .culture import Culture
 
 @dataclass(frozen=True)
 class Sample:

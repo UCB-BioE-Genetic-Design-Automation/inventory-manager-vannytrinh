@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import List
-from .models.sample import Sample
+from .sample import Sample
 
 @dataclass(frozen=True)
 class Box:

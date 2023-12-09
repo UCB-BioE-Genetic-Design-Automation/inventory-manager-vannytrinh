@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import List, Dict, Set
-from .models.box import Box
-from .models.location import Location
-from .models.concentration import Concentration
-from .models.culture import Culture
+from .box import Box
+from .location import Location
+from .concentration import Concentration
+from .culture import Culture
 
 @dataclass(frozen=True)
 class Inventory:
