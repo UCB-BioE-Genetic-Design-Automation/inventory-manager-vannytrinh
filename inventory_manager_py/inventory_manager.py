@@ -503,11 +503,19 @@ class InventoryManager:
                         sample_dict = samples[irow][icol]
                         sample_dict[curr_attr] = sample 
                         
-        #
+        # to store Sample objects in 2d array
         final_samples = []  
+
+        # iter through the rows of samples
         for irow, row in enumerate(samples):
+
+            # add row to final array
             final_samples.append([])
-            for icol, sample in enumerate(row):
+
+            # iter through samples in row
+            for sample in row:
+
+                # if there is data in sample dict
                 if len(sample) > 0:
                     # turn dict into Sample object
                     sample = Sample(**sample)
@@ -515,70 +523,73 @@ class InventoryManager:
                     sample = None
                 final_samples[irow].append(sample)
                 
+        # add final array of samples to box dict 
         box_dict['samples'] = final_samples
+
+        # create new dict
         return Box(**box_dict)
 
-# HELPER FUNCTION
-def _is_valid_row_label(row_label: str) -> bool:
-    '''
-    Checks if label is a valid row label made of uppercase letters
+    # HELPER FUNCTION
+    def _is_valid_row_label(row_label: str) -> bool:
+        '''
+        Checks if label is a valid row label made of uppercase letters
 
-    Arg:
-    row_label (str): Label to check
+        Arg:
+        row_label (str): Label to check
 
-    Return:
-    True if valid
-    '''
-    # Regular expression pattern for uppercase letters only
-    pattern = re.compile(r'^[A-Z]+$')
-    
-    # Check if label matches the pattern
-    return bool(pattern.match(row_label))
-
-# HELPER FUNCTION
-def _calc_row_label(num_row: int) -> str:
-    '''
-    Calculates the letter equivalent of a row number using zero-based numbering
-    (eg. 'A' for row 0)
-
-    Arg:
-    num_row (int): Row integer 
-
-    Return:
-    str: Letter equivalent of row number 
-    '''
-    if num_row < 0:
-        raise ValueError('Row number must be non-negative')
+        Return:
+        True if valid
+        '''
+        # Regular expression pattern for uppercase letters only
+        pattern = re.compile(r'^[A-Z]+$')
         
-    result = ""
-    while num_row >= 0:
-        # Convert the remainder to the corresponding letter
-        char_value = num_row % 26
-        result = chr(ord('A') + char_value) + result
-        # Update the number for the next iteration
-        num_row = num_row // 26 - 1
+        # Check if label matches the pattern
+        return bool(pattern.match(row_label))
 
+    # HELPER FUNCTION
+    def _calc_row_label(num_row: int) -> str:
+        '''
+        Calculates the letter equivalent of a row number using zero-based numbering
+        (eg. 'A' for row 0)
+
+        Arg:
+        num_row (int): Row integer 
+
+        Return:
+        str: Letter equivalent of row number 
+        '''
         if num_row < 0:
-            break
-    
-    return result
+            raise ValueError('Row number must be non-negative')
+            
+        result = ""
+        while num_row >= 0:
+            # Convert the remainder to the corresponding letter
+            char_value = num_row % 26
+            result = chr(ord('A') + char_value) + result
+            # Update the number for the next iteration
+            num_row = num_row // 26 - 1
 
-# HELPER FUNCTION
-def _calc_row_num(row_label: str) -> int:
-    '''
-    Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
+            if num_row < 0:
+                break
+        
+        return result
 
-    Arg:
-    row_label (str): Row label made of uppercase letters
+    # HELPER FUNCTION
+    def _calc_row_num(row_label: str) -> int:
+        '''
+        Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
 
-    Return:
-    int: Integer equivalent of row label, using 0-based numbering
+        Arg:
+        row_label (str): Row label made of uppercase letters
 
-    '''
-    result = 0
-    for char in row_label:
-        result = result * 26 + (ord(char) - ord('A') + 1)
-    return result - 1  # Adjusting to 0-based index
+        Return:
+        int: Integer equivalent of row label, using 0-based numbering
+
+        '''
+        result = 0
+        for char in row_label:
+            result = result * 26 + (ord(char) - ord('A') + 1)
+        return result - 1  # Adjusting to 0-based index
 
         
 
