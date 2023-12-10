@@ -41,70 +41,7 @@ class InventoryManager:
         num_row, num_col = box.get_size()
         # make sure location within range of box 
         if row >= num_row or col >= num_col:
-            raise ValueError('Location does not exist in box')
-
-    # HELPER FUNCTION
-    def _is_valid_row_label(self, row_label: str) -> bool:
-        '''
-        Checks if label is a valid row label made of uppercase letters
-
-        Arg:
-        row_label (str): Label to check
-
-        Return:
-        True if valid
-        '''
-        # Regular expression pattern for uppercase letters only
-        pattern = re.compile(r'^[A-Z]+$')
-        
-        # Check if label matches the pattern
-        return bool(pattern.match(row_label))
-
-    # HELPER FUNCTION
-    def _calc_row_label(self, num_row: int) -> str:
-        '''
-        Calculates the letter equivalent of a row number using zero-based numbering
-        (eg. 'A' for row 0)
-
-        Arg:
-        num_row (int): Row integer 
-
-        Return:
-        str: Letter equivalent of row number 
-        '''
-        if num_row < 0:
-            raise ValueError('Row number must be non-negative')
-            
-        result = ""
-        while num_row >= 0:
-            # Convert the remainder to the corresponding letter
-            char_value = num_row % 26
-            result = chr(ord('A') + char_value) + result
-            # Update the number for the next iteration
-            num_row = num_row // 26 - 1
-
-            if num_row < 0:
-                break
-        
-        return result
-
-    # HELPER FUNCTION
-    def _calc_row_num(self, row_label: str) -> int:
-        '''
-        Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
-
-        Arg:
-        row_label (str): Row label made of uppercase letters
-
-        Return:
-        int: Integer equivalent of row label, using 0-based numbering
-
-        '''
-        result = 0
-        for char in row_label:
-            result = result * 26 + (ord(char) - ord('A') + 1)
-        return result - 1  # Adjusting to 0-based index
-    
+            raise ValueError('Location does not exist in box')    
 
     def add_sample(self, sample: Sample, position: tuple[int, int], boxname: str, inventory: Inventory) -> Inventory: 
         '''
@@ -127,13 +64,13 @@ class InventoryManager:
         loc_to_culture = inventory.loc_to_culture.copy()
         
         # find box 
-        box = _find_box(boxname, inventory)
+        box = self._find_box(boxname, inventory)
         # error if box not found
         if box == None: 
             raise ValueError(f'Box: {boxname} does not exist in inventory')
 
         # check if location is valid 
-        _check_valid_location(box, position)
+        self._check_valid_location(box, position)
         # check if location is available for sample
         if box.samples[position[0]][position[1]]: 
             raise ValueError('Location not empty')
@@ -142,7 +79,7 @@ class InventoryManager:
         updated_samples = box.samples
         updated_samples[position[0]][position[1]] = sample
         # create updated box 
-        updated_box = Box(box.name, box.description, box.loc, updated_samples)
+        updated_box = Box(box.name, box.description, box.location, updated_samples)
         
         # remove old box from list of boxes (do not remove samples)
         boxes.remove(box)
@@ -150,7 +87,7 @@ class InventoryManager:
         boxes.append(updated_box)
 
         # create new Location for sample  
-        location = Location(boxname, position[0], position[1], sample.label, sample.sidelabel)
+        loc = Location(boxname, position[0], position[1], sample.label, sample.sidelabel)
         
         # update info for inventory 
         # make new set if doens't exist 
@@ -183,13 +120,13 @@ class InventoryManager:
         loc_to_culture = inventory.loc_to_culture
         
         # find box, will error if box not found
-        box = _find_box(boxname, inventory)
+        box = self._find_box(boxname, inventory)
         # error if box not found
         if box == None: 
             raise ValueError(f'Box: {boxname} does not exist in inventory')
         
         # check if location is valid 
-        _check_valid_location(box, position)
+        self._check_valid_location(box, position)
         # check if location contains a sample
         if box.samples[position[0]][position[1]] == None: 
             raise ValueError('Location is empty')
@@ -317,7 +254,7 @@ class InventoryManager:
         loc_to_culture = inventory.loc_to_culture
         
         # find box
-        box = _find_box(boxname, inventory)
+        box = self._find_box(boxname, inventory)
         # error if box not found
         if box == None: 
             raise ValueError(f'Box: {boxname} does not exist in inventory')
@@ -360,7 +297,7 @@ class InventoryManager:
         Inventory: Updated inventory 
         '''
         # Find the box to be updated
-        box = _find_box(boxname, inventory)
+        box = self._find_box(boxname, inventory)
         
         # Update fields with new values or keep existing values
         name = updates.get('name', box.name)
@@ -401,7 +338,7 @@ class InventoryManager:
         List[List[Sample]]: Content of specified box structured as 
         2D array corresponding to layout of box
         '''
-        box = _find_box(boxname, inventory)
+        box = self._find_box(boxname, inventory)
         return box.samples
 
     # NOTE: make sure box instance is not changed after
@@ -416,16 +353,35 @@ class InventoryManager:
         Return:
         str: name of filepath where tsv was saved
         '''
-        samples = box.samples
-        # check if valid box 
-        if not isinstance(box, Box):
-            raise ValueError('Invalid box')
-        num_row, num_col = box.get_size()
-        if num_row < 1 or num_col < 1:
-            raise ValueError('Box must have at least 1 row and 1 column.')
+        # HELPER FUNCTION
+        def calc_row_label(self, num_row: int) -> str:
+            '''
+            Calculates the letter equivalent of a row number using zero-based numbering
+            (eg. 'A' for row 0)
+
+            Arg:
+            num_row (int): Row integer 
+
+            Return:
+            str: Letter equivalent of row number 
+            '''
+            if num_row < 0:
+                raise ValueError('Row number must be non-negative')
+                
+            result = ""
+            while num_row >= 0:
+                # Convert the remainder to the corresponding letter
+                char_value = num_row % 26
+                result = chr(ord('A') + char_value) + result
+                # Update the number for the next iteration
+                num_row = num_row // 26 - 1
+
+                if num_row < 0:
+                    break
             
-        # helper function to format attribute of samples 
-        # for tsv 
+            return result
+
+        # helper function to format attribute of samples for tsv 
         def format_sample_tsv(samples, attr):
             # make sure not to change Box instance
             samples_tsv = samples.copy()
@@ -447,7 +403,7 @@ class InventoryManager:
                             sample_attr = str(sample_attr)
                         row_tsv[icol] = sample_attr
                 # add row label to array 
-                row_tsv.insert(0, _calc_row_label(irow))
+                row_tsv.insert(0, calc_row_label(irow))
                 samples_tsv[irow] = row_tsv
 
             # create header for array
@@ -490,6 +446,23 @@ class InventoryManager:
         Return:
         Box: Box object created from TSV file
         '''
+        # HELPER FUNCTION
+        def calc_row_num(self, row_label: str) -> int:
+            '''
+            Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
+
+            Arg:
+            row_label (str): Row label made of uppercase letters
+
+            Return:
+            int: Integer equivalent of row label, using 0-based numbering
+
+            '''
+            result = 0
+            for char in row_label:
+                result = result * 26 + (ord(char) - ord('A') + 1)
+            return result - 1  # Adjusting to 0-based index
+
         # read tsv file
         # will error if unable to find/open file
         with open(filepath, 'r', newline='', encoding='utf-8') as file:
@@ -539,13 +512,13 @@ class InventoryManager:
                 curr_attr = row[0][2:]
 
             # check if row starts with row label 
-            if _is_valid_row_label(row[0]):
+            if is_valid_row_label(row[0]):
                 # check that row has the correct number of cols in it
                 if num_col != len(row):
                     raise ValueError('Number of columns do not match for all rows')
 
                 # get row number 
-                irow = _calc_row_num(row[0])
+                irow = calc_row_num(row[0])
                 # check if this row either already exists or if it is the next row 
                 # if it is not the next row then data is formatted incorrectly and a row was skipped
                 if irow > len(samples): 

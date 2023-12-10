@@ -11,9 +11,9 @@ class Box:
 
     def get_size(self) -> tuple[int, int]:
         # assume that box is rectangular
-        num_row = len(samples)
+        num_row = len(self.samples)
         if num_row > 0:
-            num_col = len(samples[0]) 
+            num_col = len(self.samples[0]) 
         else:
             num_col = 0
 
