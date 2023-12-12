@@ -172,6 +172,12 @@ class InventoryManager:
         '''
         matches = set()
 
+        # make sure al keys in query are sample attributes 
+        valid_keys = {'label', 'sidelabel', 'concentration', 'construct', 'culture', 'clone'}
+        # check if query has invalid keys
+        if set(query.keys()) - valid_keys:
+            raise ValueError('Can only search for sample attributes')
+
         for box in inventory.boxes:
             for row_idx, row in enumerate(box.samples):
                 for col_idx, sample in enumerate(row):
@@ -312,6 +318,9 @@ class InventoryManager:
         '''
         # Find the box to be updated
         box = self._find_box(boxname, inventory)
+        # Check that box exists
+        if box == None: 
+            raise ValueError(f'Box: {boxname} does not exist in inventory')
         
         # Update fields with new values or keep existing values
         name = updates.get('name', box.name)
@@ -324,9 +333,9 @@ class InventoryManager:
         # If the name was changed, update sample locations
         if name != box.name:
             # Remove the old box
-            inventory = remove_box(box, inventory)
+            inventory = self.remove_box(box.name, inventory)
             # Add the updated box to the inventory
-            return add_box(updated_box, inventory)
+            return self.add_box(updated_box, inventory)
         else:
             # If the name hasn't changed, update the box in place
             boxes = inventory.boxes.copy()
@@ -353,6 +362,8 @@ class InventoryManager:
         2D array corresponding to layout of box
         '''
         box = self._find_box(boxname, inventory)
+        if box == None: 
+            raise ValueError(f'Box: {boxname} does not exist in inventory')
         return box.samples
 
     # NOTE: make sure box instance is not changed after
@@ -603,12 +614,3 @@ class InventoryManager:
         samples = empty_samples(num_row, num_col)
         
         return Box(name, description, location, samples)
-
-        
-
-    
-
-
-
-
-

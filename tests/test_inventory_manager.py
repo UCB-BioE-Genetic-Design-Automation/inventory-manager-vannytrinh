@@ -188,7 +188,7 @@ class TestInventoryManager(unittest.TestCase):
         sample3 = Sample('p3', 'pcr primer3', Concentration.uM10, 'o3', None, '1')
         sample4 = Sample('st1', 'stock primer1', Concentration.uM100, 'o1', None, '1')
         sample5 = Sample('st2', 'stock primer2', Concentration.uM100, 'o2', None, '1')
-        sample6 = Sample('seq1', 'pcr primer1', Concentration.uM266, 'o1', None, '1')
+        sample6 = Sample('seq1', 'seq primer1', Concentration.uM266, 'o1', None, '1')
         samples = [sample1, sample2, sample3, sample4, sample5, sample6]
 
         # add samples
@@ -196,19 +196,80 @@ class TestInventoryManager(unittest.TestCase):
         for i, sample in enumerate(samples):
             inventory = im.add_sample(sample, (0, i), 'primers1', inventory)
 
-        # find primer w/ concentration uM10
+        # find specific sample
+        query0 = {'label': 'p1', 
+                    'sidelabel': 'pcr primer1', 
+                    'concentration': Concentration.uM10, 
+                    'construct': 'o1', 
+                    'culture': None, 
+                    'clone': '1'}
+        query0_result = im.find_sample(query0, inventory)
+        self.assertEqual(len(query0_result), 1)
+        loc0 = query0_result[0]
+        self.assertEqual(loc0.boxname, 'primers1')
+        self.assertEqual(loc0.row, 0)
+        self.assertEqual(loc0.col, 0)
+        self.assertEqual(loc0.label, 'p1')
+        self.assertEqual(loc0.sidelabel, 'pcr primer1')
+
+        # find samples w/ concentration uM10
         query1 = {'concentration' : Concentration.uM10}
         query1_result = im.find_sample(query1, inventory)
         self.assertEqual(len(query1_result), 3)
 
+        # find sample w/ construct 'o1'
+        query2 = {'construct': 'o1'}
+        query2_result = im.find_sample(query2, inventory)
+        self.assertEqual(len(query2_result), 3)
 
-        
+        # find sample w/ concentration uM10, construct 'o1'
+        query3 = {'concentration' : Concentration.uM10,
+                    'construct': 'o1'}
+        query3_result = im.find_sample(query3, inventory)
+        self.assertEqual(len(query3_result), 1)
 
-        
+        # find sample that doesn't exist
+        query4 = {'label' : 'dna sample'}
+        query4_result = im.find_sample(query4, inventory)
+        self.assertEqual(len(query4_result), 0)
 
+        # use invalid key 
+        query5 = {'boxname' : 'primers1'}
+        with self.assertRaises(ValueError):
+            im.find_sample(query5, inventory)
 
+    def test_update_box(self):
+        im = InventoryManager()
+        inventory = Inventory([], {}, {}, {}, {})
+        box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
+        sample = Sample('primer1', 'pcr primer1', Concentration.uM10, 'p1', None, '1')
 
+        # add sample
+        inventory = im.add_box(box, inventory)
+        inventory = im.add_sample(sample, (0, 0), 'primers1', inventory)
 
+        updates = {'name': 'pcr primers', 'description': 'pcr primer box'}
+        inventory = im.update_box('primers1', updates, inventory)
+
+        # check description of box in inventory
+        box = inventory.boxes[0]
+        self.assertEqual(box.name, 'pcr primers')
+        self.assertEqual(box.description, 'pcr primer box')
+        # location remains unchanged
+        self.assertEqual(box.location, 'minus20')
+
+        # check that sample location is updated 
+        self.assertEqual(len(inventory.construct_to_locations['p1']), 1)
+        loc = inventory.construct_to_locations['p1'].copy().pop()
+        self.assertEqual(loc.boxname, 'pcr primers')
+        # check that other dictionaries have been updated w/ new location 
+        self.assertIn(loc, inventory.loc_to_conc)
+        self.assertIn(loc, inventory.loc_to_clone)
+        self.assertIn(loc, inventory.loc_to_culture)
+        # check that dictionaries only contain new location
+        self.assertEqual(len(inventory.loc_to_conc), 1)
+        self.assertEqual(len(inventory.loc_to_clone), 1)
+        self.assertEqual(len(inventory.loc_to_culture), 1)
 
 if __name__ == '__main__':
     unittest.main()
