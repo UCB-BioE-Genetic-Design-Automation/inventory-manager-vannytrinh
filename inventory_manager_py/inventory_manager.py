@@ -204,9 +204,15 @@ class InventoryManager:
         loc_to_clone = inventory.loc_to_clone.copy()
         loc_to_culture = inventory.loc_to_culture.copy()
 
+        # check inputs
+        if not isinstance(box, Box): 
+            raise ValueError('Invalid box')
+        if not isinstance(inventory, Inventory):
+            raise ValueError('Invalid inventory')
+
         # check that box with same name does not already exist 
         if self._find_box(box.name, inventory):
-            raise ValueError(f'Box with name {boxname} already exist in inventory')
+            raise ValueError(f'Box with name {box.name} already exist in inventory')
 
         # add box
         boxes.append(box)
