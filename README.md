@@ -6,6 +6,8 @@ InventoryManager is a Python project designed to keep track of DNA samples, foll
 
 InventoryManager digitally tracks DNA samples such as plasmid sequences, oligos, and purified PCR products. Samples are stored in boxes. Easily search for a sample's location in the inventory based on their different properties. Efficiently update the inventory when adding new boxes and samples or removing old ones.
 
+More information about the capabilities and functions of InventoryManager can be found in documentation.md.
+
 ## Testing
 
 Tests for the project can be found in the tests file. Multiple functions, mimicking realistic actions in a lab, are tested and passed. They include:
