@@ -1,3 +1,51 @@
+# InventoryManager
+
+InventoryManager is a Python project designed to keep track of DNA samples, following the box organization used in a wet lab setting. This project follows the Function/Model pattern, separating data models from business logic.
+
+## Purpose
+
+InventoryManager digitally tracks DNA samples such as plasmid sequences, oligos, and purified PCR products. Easily search for sample locations based on their different properties. Efficiently update the inventory when adding new boxes and samples or removing old ones.
+
+## Testing
+
+Tests for the project can be found in the tests file. Multiple functions, mimicking realistic actions in a lab, are tested and passed. They include:
+- Adding a new (empty) box to the inventory
+- Adding samples to the box
+- Looking for samples of a given construct
+- Removing a sample
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+You need Python installed on your machine. If you don't have Python, let's install it first.
+
+#### Installing Python
+
+1. Download Python from the official [Python website](https://www.python.org/downloads/).
+2. Run the installer and follow the on-screen instructions. Make sure to check the box that says "Add Python to PATH" before you click "Install Now".
+
+### Running the Program
+
+1. Open your command prompt (cmd) or terminal.
+2. Navigate to the directory where you want to download this project.
+3. Clone the project to your local machine:
+
+   ```
+   git clone https://github.com/vannytrinh/CompToDNAPy.git
+   ```
+4. Change directories to enter the project:
+
+   ```
+   cd InventoryManagerPy
+   ```
+5. Run the program:
+
+   ```
+   python3 -m inventory_manager_py
+   ```
 ### Setting Up a Virtual Environment and pytest
 
 For isolation of project dependencies, it's a good practice to use a virtual environment. Here's how you can set one up:
@@ -45,42 +93,6 @@ deactivate
 ```
 
 Remember, every time you start working on the project, activate the virtual environment and deactivate it once you're done.
-# InventoryManager
-
-InventoryManager is a Python project designed to keep track of DNA samples, following the box organization used in a wet-lab setting. This project follows the Function/Model pattern, separating data models from business logic.
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-You need Python installed on your machine. If you don't have Python, let's install it first.
-
-#### Installing Python
-
-1. Download Python from the official [Python website](https://www.python.org/downloads/).
-2. Run the installer and follow the on-screen instructions. Make sure to check the box that says "Add Python to PATH" before you click "Install Now".
-
-### Running the Program
-
-1. Open your command prompt (cmd) or terminal.
-2. Navigate to the directory where you want to download this project.
-3. Clone the project to your local machine:
-
-   ```
-   git clone https://github.com/vannytrinh/CompToDNAPy.git
-   ```
-4. Change directories to enter the project:
-
-   ```
-   cd InventoryManagerPy
-   ```
-5. Run the program:
-
-   ```
-   python3 -m inventory_manager_py
-   ```
 
 ### Running the Tests
 
