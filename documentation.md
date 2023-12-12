@@ -1,26 +1,29 @@
-#### AddSampleToBox
+#### add_sample
 Adds a new sample to a specified location in a box and updates the inventory.
 
-#### RemoveSampleFromBox
+#### remove_sample
 Removes a sample from a specified location in a box and updates the inventory.
 
-#### FindSampleLocations
+#### find_sample
 Finds the locations of samples matching the given criteria within the inventory.
 
-#### UpdateBoxMetadata
+#### update_box
 Updates specified metadata fields of a box within the inventory and reflects these changes in the inventory.
 
-#### AddBoxToInventory
+#### add_box
 Adds a new box to the inventory.
 
-#### RemoveBoxFromInventory
+#### remove_box
 Removes a specified box from the inventory.
 
-#### RetrieveBoxContents
+#### retrieve_box_contents
 Retrieves the contents of a specified box.
 
-#### BoxToTSV
+#### box_to_tsv
 Converts the data of a specified box into TSV format and saves it to a file.
 
-#### TSVToBox
+#### tsv_to_box
 Converts data from a TSV (Tab-Separated Values) file into a Box object.
+
+#### make_empty_box
+Create an empty box of the given size 
