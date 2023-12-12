@@ -28,8 +28,9 @@ class TestInventoryManager(unittest.TestCase):
         # Check new inventory is an Inventory 
         self.assertIsInstance(new_inventory, Inventory)
         # Check that box was added 
+        num_boxes = len(new_inventory.boxes)
+        self.assertEqual(num_boxes, 1)
         self.assertEqual(new_inventory.boxes[0], box)
-        self.assertEqual(len(new_inventory.boxes), 1)
 
         # try adding a box with the same name 
         box2 = im.make_empty_box('primers1', 'another box for primers', 'minus20', (8,8))
@@ -47,7 +48,8 @@ class TestInventoryManager(unittest.TestCase):
         new_inventory = im.add_box(box3, new_inventory)
         new_inventory = im.add_box(box4, new_inventory)
         # check number of boxes in inventory
-        self.assertEqual(len(new_inventory.boxes), 3)
+        num_boxes = len(new_inventory.boxes)
+        self.assertEqual(num_boxes, 3)
         self.assertIn(box3, new_inventory.boxes)
         self.assertIn(box4, new_inventory.boxes)
 
@@ -88,6 +90,14 @@ class TestInventoryManager(unittest.TestCase):
         with self.assertRaises(ValueError):
             im.add_sample(sample, (0, 0), 'primers1', inventory)
 
+        # try adding to a location out of bounds
+        with self.assertRaises(ValueError):
+            im.add_sample(sample, (100, 100), 'primers1', inventory)
+
+        # try adding to a box that isn't in the inventory 
+        with self.assertRaises(ValueError):
+            im.add_sample(sample, (1, 1), 'primers', inventory)
+
         # add multiple samples 
         sample2 = Sample('primer2', 'pcr primer2', Concentration.uM10, 'p2', None, '1')
         sample3 = Sample('primer3', 'pcr primer3', Concentration.uM10, 'p3', None, '1')
@@ -112,35 +122,92 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(len(inventory.loc_to_clone), 4)
         self.assertEqual(len(inventory.loc_to_culture), 4)
 
+    def test_remove_box(self):
+        im = InventoryManager()
+        inventory = Inventory([], {}, {}, {}, {})
+        box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
+        sample = Sample('primer1', 'pcr primer1', Concentration.uM10, 'p1', None, '1')
+
+        # create inventory w/ one box that has one sample
+        inventory = im.add_box(box, inventory)
+        inventory = im.add_sample(sample, (0,0), 'primers1', inventory)
+        
+        # remove box
+        inventory = im.remove_box('primers1', inventory)
+
+        # check that box and sample removed
+        num_boxes = len(inventory.boxes)
+        self.assertEqual(num_boxes, 0) 
+        num_cons = len(inventory.construct_to_locations)
+        self.assertEqual(num_cons, 0)
+        self.assertEqual(len(inventory.loc_to_conc), 0)
+        self.assertEqual(len(inventory.loc_to_clone), 0)
+        self.assertEqual(len(inventory.loc_to_culture), 0)
+
+    def test_remove_sample(self):
+        im = InventoryManager()
+        inventory = Inventory([], {}, {}, {}, {})
+        box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
+        sample = Sample('primer1', 'pcr primer1', Concentration.uM10, 'p1', None, '1')
+
+        # add sample
+        inventory = im.add_box(box, inventory)
+        inventory = im.add_sample(sample, (0, 0), 'primers1', inventory)
+
+        # remove sample
+        inventory = im.remove_sample((0,0), 'primers1', inventory)
+        
+        # check that location is empty 
+        self.assertIsNone(box.samples[0][0])
+
+        # check that inventory is updated 
+        num_cons = len(inventory.construct_to_locations)
+        self.assertEqual(num_cons, 0)
+        self.assertEqual(len(inventory.loc_to_conc), 0)
+        self.assertEqual(len(inventory.loc_to_clone), 0)
+        self.assertEqual(len(inventory.loc_to_culture), 0)
+
+        # try removing the sample again 
+        with self.assertRaises(ValueError):
+            im.remove_sample((0,0), 'primers1', inventory)
+
+        # try removing something out of bounds 
+        with self.assertRaises(ValueError):
+            im.remove_sample((100, 100), 'primers1', inventory)
+
+        # try adding to a box that isn't in the inventory 
+        with self.assertRaises(ValueError):
+            im.remove_sample((1, 1), 'primers', inventory)
+    
+    def test_find_sample(self): 
+        im = InventoryManager()
+        inventory = Inventory([], {}, {}, {}, {})
+        box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
+        sample1 = Sample('p1', 'pcr primer1', Concentration.uM10, 'o1', None, '1')
+        sample2 = Sample('p2', 'pcr primer2', Concentration.uM10, 'o2', None, '1')
+        sample3 = Sample('p3', 'pcr primer3', Concentration.uM10, 'o3', None, '1')
+        sample4 = Sample('st1', 'stock primer1', Concentration.uM100, 'o1', None, '1')
+        sample5 = Sample('st2', 'stock primer2', Concentration.uM100, 'o2', None, '1')
+        sample6 = Sample('seq1', 'pcr primer1', Concentration.uM266, 'o1', None, '1')
+        samples = [sample1, sample2, sample3, sample4, sample5, sample6]
+
+        # add samples
+        inventory = im.add_box(box, inventory)
+        for i, sample in enumerate(samples):
+            inventory = im.add_sample(sample, (0, i), 'primers1', inventory)
+
+        # find primer w/ concentration uM10
+        query1 = {'concentration' : Concentration.uM10}
+        query1_result = im.find_sample(query1, inventory)
+        self.assertEqual(len(query1_result), 3)
 
 
-
-
-
-
-
-    # def test_add_sample(self):
-
-    # def test_remove_box(self):
-    #     im = InventoryManager()
-    #     inventory = Inventory([], {}, {}, {}, {})
-    #     box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
-    #     inventory = im.add_box(box, inventory)
-    #     inventory = im.remove_box(box, inventory)
-
+        
 
         
 
 
 
-
-
-
-
-
-
-
-        
 
 
 if __name__ == '__main__':

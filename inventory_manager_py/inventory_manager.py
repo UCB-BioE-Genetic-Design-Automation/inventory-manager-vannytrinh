@@ -131,11 +131,14 @@ class InventoryManager:
         if box.samples[position[0]][position[1]] == None: 
             raise ValueError('Location is empty')
             
+        # find sample 
+        sample = box.samples[position[0]][position[1]]
+
         # remove sample from box's samples
         updated_samples = box.samples
         updated_samples[position[0]][position[1]] = None
         # create updated box 
-        updated_box = Box(box.name, box.description, box.loc, updated_samples)
+        updated_box = Box(box.name, box.description, box.location, updated_samples)
         
         # remove old box from list of boxes (do not remove samples)
         boxes.remove(box)
@@ -143,10 +146,12 @@ class InventoryManager:
         boxes.append(updated_box)
         
         # define sample location 
-        loc = Location(boxname=box.name, row=i, col=j, 
-                    label=sample.label, sidelabel=sample.sidelabel)
+        loc = Location(box.name, position[0], position[1], sample.label, sample.sidelabel)
         # remove sample info from inventory
         construct_to_locs[sample.construct].remove(loc)
+        # delete entry if now empty set 
+        if len(construct_to_locs[sample.construct]) == 0:
+            del construct_to_locs[sample.construct]
         del loc_to_conc[loc] 
         del loc_to_clone[loc] 
         del loc_to_culture[loc]
@@ -279,6 +284,9 @@ class InventoryManager:
                                 label=sample.label, sidelabel=sample.sidelabel)
                     
                     construct_to_locs[sample.construct].remove(loc)
+                    # delete entry if now empty set 
+                    if len(construct_to_locs[sample.construct]) == 0:
+                        del construct_to_locs[sample.construct]
                     del loc_to_conc[loc] 
                     del loc_to_clone[loc] 
                     del loc_to_culture[loc]
