@@ -330,6 +330,11 @@ class InventoryManager:
         # Check that box exists
         if box == None: 
             raise ValueError(f'Box: {boxname} does not exist in inventory')
+
+        # Check that given keys are valid
+        valid_keys = {'name', 'description', 'location'}
+        if set(updates.keys()) - valid_keys:
+            raise ValueError('Invalid keys')
         
         # Update fields with new values or keep existing values
         name = updates.get('name', box.name)
@@ -445,6 +450,9 @@ class InventoryManager:
             samples_tsv.insert(0, header)
 
             return samples_tsv
+        
+        if not isinstance(box, Box):
+            raise ValueError('Not a box')
         
         # list of rows for tsv file
         tsv_info = []

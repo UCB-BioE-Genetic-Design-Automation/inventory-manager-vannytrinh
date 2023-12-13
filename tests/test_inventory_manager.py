@@ -159,6 +159,11 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(len(inventory.loc_to_clone), 0)
         self.assertEqual(len(inventory.loc_to_culture), 0)
 
+        # tryremoving a box that doesn't exist 
+        # should error 
+        with self.assertRaises(ValueError):
+            im.remove_box('primers2', inventory)
+
     def test_remove_sample(self):
         im = InventoryManager()
         # create inventory, box, sample
@@ -300,6 +305,12 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(len(inventory.loc_to_clone), 1)
         self.assertEqual(len(inventory.loc_to_culture), 1)
 
+        # check for error w/ invalid update key
+        invalid_updates = {'boxname': 'box1'}
+
+        with self.assertRaises(ValueError):
+            im.update_box('primers1', invalid_updates, inventory)
+
     def test_retrieve_box(self):
         im = InventoryManager()
         # create inventory, box, samples
@@ -350,6 +361,10 @@ class TestInventoryManager(unittest.TestCase):
         num_samples = box.get_num_samples()
         self.assertEqual(num_samples, 4)
 
+        # try converting an invalid filepath 
+        with self.assertRaises(FileNotFoundError):
+            im.tsv_to_box('primers.tsv')
+
     def test_box_to_tsv(self):
         im = InventoryManager()
         # create inventory, box, samples
@@ -367,27 +382,24 @@ class TestInventoryManager(unittest.TestCase):
 
         # define filepath 
         filepath = 'tests/data/ex_primer_box_output.tsv'
-
         # get the box with all the samples
         box = inventory.boxes[0]
-
         # save info of box to check later 
         initial_box = Box(box.name, box.description, box.location, box.samples)
-
         # save to tsv
         save_box = im.box_to_tsv(box, filepath)
-
         # check that it returned the correct filepath
         self.assertEqual(save_box, filepath)
-
         # check that the original box is unchanged
         self.assertEqual(box, initial_box)
-
         # turn TSV back into box
         new_box = im.tsv_to_box(filepath)
-
         # it should the same as the old box 
         self.assertEqual(new_box, initial_box)
+
+        # try converting a non-Box instance
+        with self.assertRaises(ValueError):
+            im.box_to_tsv('box', filepath)
 
 if __name__ == '__main__':
     unittest.main()
