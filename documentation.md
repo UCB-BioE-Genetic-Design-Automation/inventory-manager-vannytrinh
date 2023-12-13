@@ -182,7 +182,7 @@ Box.get_num_samples()
 ```
 Get the number of samples stored in the box 
 
-_Note: This method was implemented towards the end of the project and therefore has not been used yet._
+_Note: This method was implemented towards the end of the project and therefore has not been used in InventoryManager yet._
 
 ### Return
 - int: Number of samples
