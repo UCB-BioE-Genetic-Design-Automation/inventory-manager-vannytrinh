@@ -17,85 +17,85 @@ All tests can be found at [tests](tests)
 
 ## make_box
 `make_box`
-- create a 8x8 box 
-  - check that all features of box is stored correctly 
-  - check the number of rows in the box
-  - check the number of columns in the box 
+- Create a 8x8 box 
+  - Check that all features of box is stored correctly 
+  - Check the number of rows in the box
+  - Check the number of columns in the box 
 
 ## add_box
 `add_box`
-- add box to inventory 
-  - check that box is now in inventory 
-- add box with same name as existing box 
-  - check for error 
-- add something that is not a box 
-  - check for error
-- add multiple boxes 
-  - check that all boxes are in inventory 
+- Add box to inventory 
+  - Check that box is now in inventory 
+- Add box with same name as existing box 
+  - Check for error 
+- Add something that is not a box 
+  - Check for error
+- Add multiple boxes 
+  - Check that all boxes are in inventory 
 
 ## remove_box
 `remove_box`
-- remove box (box has a sample inside)
-  - check that box is removed from inventory 
-  - check that sample is removed from inventory 
-- remove a box that doesn’t exist 
-  - check for error 
+- Remove box (box has a sample inside)
+  - Check that box is removed from inventory 
+  - Check that sample is removed from inventory 
+- Remove a box that doesn’t exist 
+  - Check for error 
 
 ## remove_sample
 `remove_sample`
-- remove sample from box 
-  - check that sample removed from box 
-  - check that sample info removed from inventory 
-- remove sample at empty location 
-  - check for error 
-- remove sample at invalid location
-  - check for error 
-- remove sample from invalid box 
-  - check for error
+- Remove sample from box 
+  - Check that sample removed from box 
+  - Check that sample info removed from inventory 
+- Remove sample at empty location 
+  - Check for error 
+- Remove sample at invalid location
+  - Check for error 
+- Remove sample from invalid box 
+  - Check for error
 
 ## find_sample
 `find_sample`
-- find sample w/ all fields specified in query (one matching)
-  - check for correct location for sample that match
-- find samples w/ one field specified in query 
-  - check for correct locations for samples that match
-- find samples w/ two fields specified in query 
-  - check for correct locations for samples that match
-- find samples w/ a query that matches nothing in existing inventory 
-  - check for empty list 
-- find samples w/ a query with an invalid key
-  - check for error
+- Find sample w/ all fields specified in query (one matching)
+  - Check for correct location for sample that match
+- Find samples w/ one field specified in query 
+  - Check for correct locations for samples that match
+- Find samples w/ two fields specified in query 
+  - Check for correct locations for samples that match
+- Find samples w/ a query that matches nothing in existing inventory 
+  - Check for empty list 
+- Find samples w/ a query with an invalid key
+  - Check for error
 
 ## update_box
 `update_box`
-- update box (including name)
-  - check updated box fields are correct 
-  - check that sample locations in inventory reflect update
-- update box w/ invalid key 
-  - check for error 
-- update box that doesn’t exist
-  - check for error
+- Update box (including name)
+  - Check updated box fields are correct 
+  - Check that sample locations in inventory reflect update
+- Update box w/ invalid key 
+  - Check for error 
+- Update box that doesn’t exist
+  - Check for error
 
 ## retrieve_box
 `retrieve_box`
-- retrieve 8x8 box with 6 samples
-  - check for a 8x8 2d array 
-  - check for 6 samples in box 
-- retrieve box that doesn’t exists 
-  - check for error 
+- Retrieve 8x8 box with 6 samples
+  - Check for a 8x8 2d array 
+  - Check for 6 samples in box 
+- Retrieve box that doesn’t exists 
+  - Check for error 
 
 ## tsv_to_box
 `tsv_to_box` 
-- convert an example tsv file
-  - check for box with correct number of samples
-- convert an invalid filepath
-  - check for error
+- Convert an example tsv file
+  - Check for box with correct number of samples
+- Convert an invalid filepath
+  - Check for error
 
 ## box_to_tsv
 `box_to_tsv`
-- convert a box to tsv 
-  - check that filepath name was correctly returned 
-  - check that box instance is unchanged 
-  - convert back from file to box and check that the boxes are equivalent 
-- convert something that is not a box
-  - check for error
+- Convert a box to tsv 
+  - Check that filepath name was correctly returned 
+  - Check that box instance is unchanged 
+  - Convert back from file to box and check that the boxes are equivalent 
+- Convert something that is not a box
+  - Check for error
