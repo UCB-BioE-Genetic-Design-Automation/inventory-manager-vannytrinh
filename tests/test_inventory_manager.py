@@ -275,7 +275,6 @@ class TestInventoryManager(unittest.TestCase):
         im = InventoryManager()
         inventory = Inventory([], {}, {}, {}, {})
         box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
-        box2 = im.make_empty_box('primers2', 'another box for primers', 'minus20', (8,8))
         sample1 = Sample('p1', 'pcr primer1', Concentration.uM10, 'o1', None, '1')
         sample2 = Sample('p2', 'pcr primer2', Concentration.uM10, 'o2', None, '1')
         sample3 = Sample('p3', 'pcr primer3', Concentration.uM10, 'o3', None, '1')
@@ -288,11 +287,30 @@ class TestInventoryManager(unittest.TestCase):
         inventory = im.add_box(box, inventory)
         for i, sample in enumerate(samples):
             inventory = im.add_sample(sample, (0, i), 'primers1', inventory)
-
+    
+        # check for an 8x8 2d array 
         box_samples = im.retrieve_box_contents('primers1', inventory)
         self.assertIsInstance(box_samples, list)
-        self.assertGreater(len(box_samples), 0) 
+        self.assertEqual(len(box_samples), 8) 
         self.assertIsInstance(box_samples[0], list)
+        self.assertEqual(len(box_samples[0]), 8)
+
+        # check each sample 
+        box_sample1 = box_samples[0][0]
+        box_sample2 = box_samples[0][1]
+        box_sample3 = box_samples[0][2]
+        box_sample4 = box_samples[0][3]
+        box_sample5 = box_samples[0][4]
+        box_sample6 = box_samples[0][5]
+
+        self.assertEqual(box_sample1, sample1)
+        self.assertEqual(box_sample2, sample2)
+        self.assertEqual(box_sample3, sample3)
+        self.assertEqual(box_sample4, sample4)
+        self.assertEqual(box_sample5, sample5)
+        self.assertEqual(box_sample6, sample6)
+        
+
 
 if __name__ == '__main__':
     unittest.main()
