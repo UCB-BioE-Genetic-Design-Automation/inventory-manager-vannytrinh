@@ -271,5 +271,28 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(len(inventory.loc_to_clone), 1)
         self.assertEqual(len(inventory.loc_to_culture), 1)
 
+    def test_retrieve_box(self):
+        im = InventoryManager()
+        inventory = Inventory([], {}, {}, {}, {})
+        box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
+        box2 = im.make_empty_box('primers2', 'another box for primers', 'minus20', (8,8))
+        sample1 = Sample('p1', 'pcr primer1', Concentration.uM10, 'o1', None, '1')
+        sample2 = Sample('p2', 'pcr primer2', Concentration.uM10, 'o2', None, '1')
+        sample3 = Sample('p3', 'pcr primer3', Concentration.uM10, 'o3', None, '1')
+        sample4 = Sample('st1', 'stock primer1', Concentration.uM100, 'o1', None, '1')
+        sample5 = Sample('st2', 'stock primer2', Concentration.uM100, 'o2', None, '1')
+        sample6 = Sample('seq1', 'seq primer1', Concentration.uM266, 'o1', None, '1')
+        samples = [sample1, sample2, sample3, sample4, sample5, sample6]
+
+        # add samples
+        inventory = im.add_box(box, inventory)
+        for i, sample in enumerate(samples):
+            inventory = im.add_sample(sample, (0, i), 'primers1', inventory)
+
+        box_samples = im.retrieve_box_contents('primers1', inventory)
+        self.assertIsInstance(box_samples, list)
+        self.assertGreater(len(box_samples), 0) 
+        self.assertIsInstance(box_samples[0], list)
+
 if __name__ == '__main__':
     unittest.main()
