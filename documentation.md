@@ -1,10 +1,22 @@
 # Table of Contents
 - InventoryManager
   - [Updating Inventory](#methods-for-updating-inventory)
+    - [add_sample](#add_sample)
+    - [remove_sample](#remove_sample)
+    - [add_box](#add_box)
+    - [remove_box](#remove_box)
+    - [update_box](#update_box)
   - [Searching in Inventory](#methods-for-searching-within-inventory)
+    - [find_sample](#find_sample)
+    - [retrieve_box_contents](#retrieve_box_contents)
   - [Box/TSV Conversion](#methods-for-boxtsv-conversion)
+    - [box_to_tsv](#box_to_tsv)
+    - [tsv_to_box](#tsv_to_box)
   - [Other](#other-inventorymanager-methods)
+    - [make_empty_box](#make_empty_box)
 - [Box](#methods-for-box)
+    - [get_size](#get_size)
+    - [get_num_samples](#get_num_samples)
 
 # Methods for Updating Inventory
 Methods for updating the inventory with adding/removing a box or sample
