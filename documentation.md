@@ -3,7 +3,7 @@ Methods for updating the inventory with adding/removing a box or sample
 
 ## add_sample
 ``` python
-add_sample(sample, position, boxname, inventory)
+InventoryManager.add_sample(sample, position, boxname, inventory)
 ```
 
 Adds a new sample to a specified location in a box and updates the inventory.
@@ -19,7 +19,7 @@ Adds a new sample to a specified location in a box and updates the inventory.
 
 ## remove_sample
 ``` python
-remove_sample(position, boxname, inventory)
+InventoryManager.remove_sample(position, boxname, inventory)
 ```
 
 Removes a sample from a specified location in a box and updates the inventory.
@@ -34,7 +34,7 @@ Removes a sample from a specified location in a box and updates the inventory.
 
 ## add_box
 ``` python
-add_box
+InventoryManager.add_box(box, inventory)
 ```
 Adds a new box to the inventory.
 
@@ -47,7 +47,7 @@ Adds a new box to the inventory.
   
 ## remove_box
 ``` python
-remove_box
+InventoryManager.remove_box(boxname, inventory)
 ```
 Removes a specified box from the inventory.
 
@@ -60,7 +60,7 @@ Removes a specified box from the inventory.
 
 ## update_box
 ``` python
-update_box
+InventoryManager.update_box(boxname, updates, inventory)
 ```
 Updates specified metadata fields of a box within the inventory and reflects these changes in the inventory.
 
@@ -71,40 +71,76 @@ Updates specified metadata fields of a box within the inventory and reflects the
 ### Returns
 - Inventory: Updated inventory with updated box
 
-# Methods for searching within the inventory
+# Methods for Searching Within the Inventory
 Methods to search an inventory for samples or retrieve the contents of a box
 
 ## find_sample
 ``` python
-find_sample
+InventoryManager.find_sample(query, inventory)
 ```
 Finds the locations of samples matching the given criteria within the inventory.
 
+### Parameters: 
+- query (dict): Dictionary of keys corresponding to fields of a Sample ('label', 'sidelabel', 'concentration', 'culture', 'clone')
+- inventory (Inventory): Current inventory
+        
+### Return: 
+- List[Location]: List of location objects for found samples
+
 ## retrieve_box_contents
 ``` python
-retrieve_box_contents
+InventoryManager.retrieve_box_contents(boxname, inventory)
 ```
 Retrieves the contents of a specified box.
 
-# Methods to serialize/deserialize a box
+### Parameters:
+- boxname (str): Name of box whose contents are to be retrieved
+- inventory (Inventory): Current inventory 
+        
+### Return:
+- List[List[Sample]]: Content of specified box structured as 2D array corresponding to layout of box
+
+# Methods to Serialize/Deserialize a box
 Methods to save a box as a TSV or parse a TSV into a box object
 
 ## box_to_tsv
 ``` python
-box_to_tsv
+InventoryManager.box_to_tsv(box, filepath)
 ```
 Converts the data of a specified box into TSV format and saves it to a file.
 
+### Parameters: 
+- box (Box): Box whose data is to be converted
+- filepath (str): Filepath wheer tsv is to be stored
+        
+### Return:
+- str: name of filepath where TSV was saved
+
 ## tsv_to_box
 ``` python
-tsv_to_box
+InventoryManager.tsv_to_box(filepath)
 ```
 Converts data from a TSV (Tab-Separated Values) file into a Box object.
 
-# Other Methods 
+### Parameters:
+- filepath (str): Filepath of TSV to be converted
+        
+### Return:
+- Box: Box object created from TSV file
+
+# Other InventoryManager Methods 
 
 ## make_empty_box
 ``` python
-make_empty_box
+InventoryManager.make_empty_box(name, description, location, size)
 ```
 Create an empty box of the given size 
+
+### Parameters 
+- name (str): Name of box
+- description (str): Description of box
+- location (str): Location of box
+- size tuple[int, int]: Number of rows and number of columns to make box
+
+### Returns:
+- Box: Box of given size
