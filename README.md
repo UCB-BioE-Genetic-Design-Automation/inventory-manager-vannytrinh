@@ -47,7 +47,7 @@ You need Python installed on your machine. If you don't have Python, let's insta
 4. Change directories to enter the project:
 
    ```
-   cd InventoryManagerPy
+   cd inventory_manager_py
    ```
 5. Run the program:
 
