@@ -1,0 +1,64 @@
+>name	primers1
+>description	box for primers
+>location	minus20
+
+>>label	1	2	3	4	5	6	7	8
+A	p1	p2	p3					
+B								
+C								
+D								
+E								
+F								
+G								
+H								
+
+>>sidelabel	1	2	3	4	5	6	7	8
+A	pcr primer1	pcr primer2	pcr primer3					
+B								
+C								
+D								
+E								
+F								
+G								
+H								
+
+>>concentration	1	2	3	4	5	6	7	8
+A	uM10	uM10	uM10					
+B								
+C								
+D								
+E								
+F								
+G								
+H								
+
+>>construct	1	2	3	4	5	6	7	8
+A	o1	o2	o3					
+B								
+C								
+D								
+E								
+F								
+G								
+H								
+
+>>culture	1	2	3	4	5	6	7	8
+A								
+B								
+C								
+D								
+E								
+F								
+G								
+H								
+
+>>clone	1	2	3	4	5	6	7	8
+A	1	1	1					
+B								
+C								
+D								
+E								
+F								
+G								
+H								
+

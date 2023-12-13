@@ -340,5 +340,54 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(box_sample5, sample5)
         self.assertEqual(box_sample6, sample6)
 
+    def test_tsv_to_box(self):
+        im = InventoryManager()
+
+        # convert tsv to box
+        box = im.tsv_to_box('tests/data/ex_primer_box.tsv')
+
+        # check the number of samples in box 
+        num_samples = box.get_num_samples()
+        self.assertEqual(num_samples, 4)
+
+    def test_box_to_tsv(self):
+        im = InventoryManager()
+        # create inventory, box, samples
+        inventory = Inventory([], {}, {}, {}, {})
+        box = im.make_empty_box('primers1', 'box for primers', 'minus20', (8,8))
+        sample1 = Sample('p1', 'pcr primer1', Concentration.uM10, 'o1', None, '1')
+        sample2 = Sample('p2', 'pcr primer2', Concentration.uM10, 'o2', None, '1')
+        sample3 = Sample('p3', 'pcr primer3', Concentration.uM10, 'o3', None, '1')
+        samples = [sample1, sample2, sample3]
+
+        # add samples
+        inventory = im.add_box(box, inventory)
+        for i, sample in enumerate(samples):
+            inventory = im.add_sample(sample, (0, i), 'primers1', inventory)
+
+        # define filepath 
+        filepath = 'tests/data/ex_primer_box_output.tsv'
+
+        # get the box with all the samples
+        box = inventory.boxes[0]
+
+        # save info of box to check later 
+        initial_box = Box(box.name, box.description, box.location, box.samples)
+
+        # save to tsv
+        save_box = im.box_to_tsv(box, filepath)
+
+        # check that it returned the correct filepath
+        self.assertEqual(save_box, filepath)
+
+        # check that the original box is unchanged
+        self.assertEqual(box, initial_box)
+
+        # turn TSV back into box
+        new_box = im.tsv_to_box(filepath)
+
+        # it should the same as the old box 
+        self.assertEqual(new_box, initial_box)
+
 if __name__ == '__main__':
     unittest.main()

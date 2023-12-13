@@ -1,0 +1,33 @@
+>name	VT-oligos1		
+>description	Van Trinh's PCR oligps		
+>location	minus 20		
+			
+>>label	1	2	3
+A	primer1	primer2	
+B	primer3	primer4	
+C			
+			
+>>sidelabel	1	2	3
+A	primer oLFL-VT-001	primer oLFL-VT-002	
+B	primer oLFL-VT-002	primer oLFL-VT-003	
+C			
+			
+>>construct	1	2	3
+A	oLFL-VT-001	oLFL-VT-002	
+B	oLFL-VT-002	oLFL-VT-003	
+C			
+			
+>>concentration	1	2	3
+A	uM10	uM10	
+B	uM10	uM10	
+C			
+			
+>>culture	1	2	3
+A			
+B			
+C			
+			
+>>clone	1	2	3
+A	1	1	
+B	1	1	
+C			

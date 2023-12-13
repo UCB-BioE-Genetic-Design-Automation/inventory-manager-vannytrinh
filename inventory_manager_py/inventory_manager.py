@@ -388,7 +388,7 @@ class InventoryManager:
         str: name of filepath where tsv was saved
         '''
         # HELPER FUNCTION
-        def calc_row_label(self, num_row: int) -> str:
+        def calc_row_label(num_row: int) -> str:
             '''
             Calculates the letter equivalent of a row number using zero-based numbering
             (eg. 'A' for row 0)
@@ -416,7 +416,7 @@ class InventoryManager:
             return result
 
         # helper function to format attribute of samples for tsv 
-        def format_sample_tsv(samples, attr):
+        def format_sample_tsv(samples, attr) -> List[List[str]]:
             # make sure not to change Box instance
             samples_tsv = samples.copy()
 
@@ -459,7 +459,7 @@ class InventoryManager:
         attrs = ['label', 'sidelabel', 'concentration', 'construct', 'culture', 'clone']
         # append sample info
         for attr in attrs:
-            tsv_info.extend(format_sample_tsv(samples, attr))
+            tsv_info.extend(format_sample_tsv(box.samples, attr))
             tsv_info.append([])
         
         # write to file
@@ -481,7 +481,7 @@ class InventoryManager:
         Box: Box object created from TSV file
         '''
         # HELPER FUNCTION
-        def calc_row_num(self, row_label: str) -> int:
+        def calc_row_num(row_label: str) -> int:
             '''
             Calulate a row label into a number (eg. 'A' -> 0, 'B' -> 1, 'AA' -> 26)
 
@@ -496,6 +496,17 @@ class InventoryManager:
             for char in row_label:
                 result = result * 26 + (ord(char) - ord('A') + 1)
             return result - 1  # Adjusting to 0-based index
+
+        # HELPER FUNCTION
+        def is_valid_row_label(row_label):
+            '''
+            Return true if it is a valid label for a row (uppercase letters)
+            '''
+            # Regular expression pattern for uppercase letters only
+            pattern = re.compile(r'^[A-Z]+$')
+            
+            # Check if label matches the pattern
+            return bool(pattern.match(row_label))
 
         # read tsv file
         # will error if unable to find/open file
@@ -516,13 +527,13 @@ class InventoryManager:
         # parse through row in data
         for row in tsv_data:
             # skip empty rows
-            if row == []:
+            if not any(row):
                 continue
 
             # look for '>' indicating box data
             if row[0][0] == '>' and row[0][1] != '>':
                 # make sure there is a value for attribute
-                if len(row) != 2:
+                if len(row) < 2:
                     raise ValueError('Box metadata incorrectly entered')
                 # get name of attribute
                 attr_name = row[0][1:]
@@ -552,7 +563,7 @@ class InventoryManager:
                     raise ValueError('Number of columns do not match for all rows')
 
                 # get row number 
-                irow = calc_row_num(row[0])
+                irow = calc_row_num(str(row[0]))
                 # check if this row either already exists or if it is the next row 
                 # if it is not the next row then data is formatted incorrectly and a row was skipped
                 if irow > len(samples): 
@@ -590,6 +601,11 @@ class InventoryManager:
 
                 # if there is data in sample dict
                 if len(sample) > 0:
+                    # replace concentration, culture string w/ object 
+                    if 'concentration' in sample:
+                        sample['concentration'] = Concentration[sample['concentration']]
+                    if 'culture' in sample: 
+                        sample['culture'] = Concentration[sample['culture']]
                     # turn dict into Sample object
                     sample = Sample(**sample)
                 else:
