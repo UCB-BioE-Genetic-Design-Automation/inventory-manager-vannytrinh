@@ -1,10 +1,10 @@
 # InventoryManager
 
-InventoryManager is a Python project designed to keep track of DNA samples, following the box organization used in a wet lab setting. This project follows the Function/Model pattern, separating data models from business logic.
+InventoryManager is a Python project designed to organize and track DNA samples within a laboratory environment. This project follows the Function/Model pattern, separating data models from business logic.
 
 ## Purpose
 
-InventoryManager digitally tracks DNA samples such as plasmid sequences, oligos, and purified PCR products. Samples are stored in boxes. Easily search for a sample's location in the inventory based on their different properties. Efficiently update the inventory when adding new boxes and samples or removing old ones.
+InventoryManager manages DNA samples such as plasmid sequences, oligos, and purified PCR products and their locations in the lab. The system stores samples and their data, such as the labels on their tubes, their concentration, construct, and more. The samples are stored in boxes, which are all stored in an inventory. Quickly search for a sample's location based on their properties. Efficiently update the inventory when adding new boxes and samples or removing old ones.
 
 More information about the capabilities and functions of InventoryManager can be found in [documentation.md](documentation.md).
 
@@ -19,6 +19,8 @@ Tests for the project can be found in the tests file. Multiple functions are tes
 - Updating a box with new information
 - Turning a box into a TSV
 - Reading a TSV into a box
+
+Tests can be found at [tests/test_inventory_manager](tests/inventory-manager.py)
 
 ## Getting Started
 
@@ -138,7 +140,8 @@ Don't be afraid to explore and make mistakes. That's a huge part of the learning
 Here are some ideas I didn't have time to implement for this project but could be beneficial for a future edition!
 - Identifying available position(s) to add/move a sample
 - Moving a sample from one location to another
-- Searching for samples that fit any queries provided (not just all)
+- Searching for samples that fit any queries provided (not just all queries provided)
+- Expand the system to store other reagents (ex. enzymes, buffers, etc...)
 
 ## Authors
 
