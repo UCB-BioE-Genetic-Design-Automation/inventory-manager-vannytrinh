@@ -22,7 +22,9 @@ class InventoryManager:
         Returns: 
         Box: box with boxname or None if no box found
         '''
+        # iter through boxes in inventory
         for box in inventory.boxes: 
+            # check box name
             if box.name == boxname: 
                 return box   
         return None
@@ -178,13 +180,19 @@ class InventoryManager:
         if set(query.keys()) - valid_keys:
             raise ValueError('Can only search for sample attributes')
 
+        # iter through all boxes in inventory
         for box in inventory.boxes:
+            # iter through rows of box
             for row_idx, row in enumerate(box.samples):
+                # iter through samples in row
                 for col_idx, sample in enumerate(row):
+                    # if None
                     if not sample:
                         continue
 
+                    # check if sample matches query 
                     if all(getattr(sample, key, None) == value for key, value in query.items()):
+                        # get location of sample
                         location = Location(
                             boxname=box.name,
                             row=row_idx,
@@ -192,6 +200,7 @@ class InventoryManager:
                             label=sample.label,
                             sidelabel=sample.sidelabel
                         )
+                        # append to result
                         matches.add(location)
 
         return list(matches) 
@@ -597,7 +606,9 @@ class InventoryManager:
         '''
         Creates box of given size
         '''
+        # get size of box from input
         num_row, num_col = size
+        # size must be at least 1
         if num_row < 1:
             raise ValueError('Must have at least 1 row')
         if num_col < 1:
