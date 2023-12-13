@@ -608,7 +608,7 @@ class InventoryManager:
         '''
         # get size of box from input
         num_row, num_col = size
-        # size must be at least 1
+        # size must be at least
         if num_row < 1:
             raise ValueError('Must have at least 1 row')
         if num_col < 1:
