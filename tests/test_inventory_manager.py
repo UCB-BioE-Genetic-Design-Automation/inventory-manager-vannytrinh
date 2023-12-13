@@ -307,9 +307,12 @@ class TestInventoryManager(unittest.TestCase):
 
         # check for error w/ invalid update key
         invalid_updates = {'boxname': 'box1'}
-
         with self.assertRaises(ValueError):
             im.update_box('primers1', invalid_updates, inventory)
+
+        # check for error w/ invalid boxname
+        with self.assertRaises(ValueError):
+            im.update_box('box1', updates, inventory)
 
     def test_retrieve_box(self):
         im = InventoryManager()
@@ -351,11 +354,18 @@ class TestInventoryManager(unittest.TestCase):
         self.assertEqual(box_sample5, sample5)
         self.assertEqual(box_sample6, sample6)
 
+        # check for error w/ invalid boxname
+        with self.assertRaises(ValueError):
+            im.retrieve_box_contents('box1', inventory)
+
     def test_tsv_to_box(self):
         im = InventoryManager()
 
         # convert tsv to box
         box = im.tsv_to_box('tests/data/ex_primer_box.tsv')
+
+        # check for box
+        self.assertIsInstance(box, Box)
 
         # check the number of samples in box 
         num_samples = box.get_num_samples()
