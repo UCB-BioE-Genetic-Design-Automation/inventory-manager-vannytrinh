@@ -1,5 +1,5 @@
 # Table of Contents
-- Inventory
+- InventoryManager
   - [Updating Inventory](#methods-for-updating-inventory)
   - [Searching in Inventory](#methods-for-searching-within-inventory)
   - [Box/TSV Conversion](#methods-for-boxtsv-conversion)
