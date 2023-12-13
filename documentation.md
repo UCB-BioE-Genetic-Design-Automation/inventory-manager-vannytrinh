@@ -1,3 +1,11 @@
+# Table of Contents
+- Inventory
+  - [Updating Inventory](#methods-for-updating-inventory)
+  - [Searching in Inventory](#methods-for-searching-within-inventory)
+  - [Box/TSV Conversion](#methods-for-boxtsv-conversion)
+  - [Other](#other-inventorymanager-methods)
+- [Box](#methods-for-box)
+
 # Methods for Updating Inventory
 Methods for updating the inventory with adding/removing a box or sample
 
@@ -71,7 +79,7 @@ Updates specified metadata fields of a box within the inventory and reflects the
 ### Return
 - Inventory: Updated inventory with updated box
 
-# Methods for Searching Within the Inventory
+# Methods for Searching Within Inventory
 Methods to search an inventory for samples or retrieve the contents of a box
 
 ## find_sample
@@ -100,7 +108,7 @@ Retrieves the contents of a specified box.
 ### Return
 - List[List[Sample]]: Content of specified box structured as 2D array corresponding to layout of box
 
-# Methods to Serialize/Deserialize a box
+# Methods for Box/TSV Conversion
 Methods to save a box as a TSV or parse a TSV into a box object
 
 ## box_to_tsv
