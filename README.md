@@ -100,8 +100,6 @@ To deactivate the virtual environment when you're done, simply type:
 deactivate
 ```
 
-Remember, every time you start working on the project, activate the virtual environment and deactivate it once you're done.
-
 ### Running the Tests
 
 This project uses unittest as the testing framework. To run tests, follow these steps:
@@ -133,8 +131,6 @@ If this is your first time using the command line, don't worry, here are the ste
 
 4. How to run a Python program or tests:
    - Follow the instructions above in the "Running the Program" and "Running the Tests" sections.
-
-Don't be afraid to explore and make mistakes. That's a huge part of the learning process!
 
 ## Future Directions
 Here are some ideas I didn't have time to implement for this project but could be beneficial for a future edition!
