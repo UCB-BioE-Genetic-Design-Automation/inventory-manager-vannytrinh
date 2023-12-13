@@ -10,11 +10,15 @@ More information about the capabilities and functions of InventoryManager can be
 
 ## Testing
 
-Tests for the project can be found in the tests file. Multiple functions, mimicking realistic actions in a lab, are tested and passed. They include:
+Tests for the project can be found in the tests file. Multiple functions are tested (and passed)! They include:
 - Adding a new (empty) box to the inventory
 - Adding samples to the box
-- Looking for samples of a given construct
+- Looking for specific samples of given properties
 - Removing a sample
+- Removing a box
+- Updating a box with new information
+- Turning a box into a TSV
+- Reading a TSV into a box
 
 ## Getting Started
 
@@ -129,6 +133,12 @@ If this is your first time using the command line, don't worry, here are the ste
    - Follow the instructions above in the "Running the Program" and "Running the Tests" sections.
 
 Don't be afraid to explore and make mistakes. That's a huge part of the learning process!
+
+## Future Directions
+Here are some ideas I didn't have time to implement for this project but could be beneficial for a future edition!
+- Identifying available position(s) to add/move a sample
+- Moving a sample from one location to another
+- Searching for samples that fit any queries provided (not just all)
 
 ## Authors
 
