@@ -20,7 +20,7 @@ Tests for the project can be found in the tests file. Multiple functions are tes
 - Turning a box into a TSV
 - Reading a TSV into a box
 
-Tests can be found at [tests/test_inventory_manager](tests/inventory-manager.py)
+There are a total of 12 tests(10 InventoryModel, 2 Box), one for each existing method. Tests can be found at [tests/test_inventory_manager](tests/inventory-manager.py)
 
 ## Getting Started
 
