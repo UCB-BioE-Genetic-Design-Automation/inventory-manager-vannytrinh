@@ -42,7 +42,7 @@ You need Python installed on your machine. If you don't have Python, let's insta
 3. Clone the project to your local machine:
 
    ```
-   git clone https://github.com/vannytrinh/CompToDNAPy.git
+   git clone https://github.com/UCB-BioE-Genetic-Design-Automation/inventory-manager-vannytrinh.git
    ```
 4. Change directories to enter the project:
 
